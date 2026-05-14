@@ -135,3 +135,58 @@
     - Incorrect or unexpected tool arguments can occur and should be validated
     - Tool latency can increase end-to-end response time
     - Function calling improves reliability, but final outputs still need review for critical decisions
+
+
+# 5.Optimize generatie ai model performance
+- Prompt engineering: Prompt components:
+    - System message: Instructions that define the model's behavior, role, and constraints.
+        - Start with the assistant's role: State the role and the expected outcome for a typical request.
+        - Define boundaries: List the topics, actions, and content types the assistant should avoid.
+        - Specify the output format: If you need a specific format, state it plainly and keep it consistent.
+        - Add a "when unsure" policy: Tell the model what to do when the user's request is ambiguous, out of scope, or when the model lacks information.
+    - User message: The question or input from the user.
+    - Assistant message: Previous model responses, used in multi-turn conversations.
+    - Examples: Sample input/output pairs that demonstrate the expected response format.
+
+- Prompt patterns:
+    - Persona pattern: Instruct model to take on a specific perspective/role
+    - Format template pattern: Provide a structure/template in your prompt
+    - Chain-of-thought pattern: Ask model to explain its reasoning step by step
+    - Few-shot learning pattern: Provide one or more examples
+
+- Model parameters: temperature and Top_p (randomness but by limiting the model to a subset of the most probable next tokens) -> only adjust one
+- Prompt engineering keeps cost low, guides model tone, format and behavior, but might not be enough if the model does not have access to the information
+
+- RAG:
+    - Azure AI Search to store indexes
+    - Azure AI Search supports keyword, semantic, vector, hybrid search 
+
+- Fine-tuning:
+    - When to fine-tune: 
+        - Consistent style and tone: Your organization has a specific brand voice, and the model needs to follow it reliably across all interactions. For example, the travel agency wants every response to use a warm, encouraging tone with short paragraphs.
+        - Specific output formats: You need the model to reliably produce structured output, like JSON responses following a defined schema, and few-shot examples alone aren't sufficient.
+        - Reducing prompt length: Long system messages with many examples consume tokens and increase latency. Fine-tuning embeds those patterns into the model, reducing the prompt size needed for each request.
+        - Distillation: You want to transfer the capabilities of a large, expensive model to a smaller, more efficient one. For example, you can collect outputs from a high-performing model and use them to fine-tune a smaller model that achieves similar quality at lower cost and latency.
+        - Enhancing tool usage: When your application uses tool calling, fine-tuning with tool examples can improve the accuracy of tool selection and parameter generation.
+
+
+- Types of fine-tuning:
+    - Supervised fine-tuning (SFT): Train the model on a labeled dataset of prompt-and-response pairs. The model learns to produce outputs that match the patterns in your training data. This technique works best when there are clear, well-defined ways to approach a task.
+    - Reinforcement fine-tuning (RFT): Optimize the model's behavior through iterative feedback, using a grader to reward better responses incrementally. RFT works well for complex or dynamic tasks where there are many possible solutions and you want to improve the model's reasoning quality.
+    - Direct Preference Optimization (DPO): Align the model based on human preferences by providing preferred and non-preferred response pairs. DPO is computationally lighter than traditional reinforcement learning approaches while being equally effective at alignment.
+
+- Fine-tuning training: Including a system message in your training data is important. Leaving it blank tends to produce lower-accuracy models. Use the same system message when you deploy your fine-tuned model for inference.
+
+- Fine tuning challenges: 
+    - Training costs: Fine-tuning has upfront costs for training and ongoing hourly costs for hosting the custom model.
+    - Data quality requirements: Poor-quality or unrepresentative training data leads to overfitting, underfitting, or bias.
+    - Maintenance: Fine-tuned models may need to be retrained when data changes or when updated base models are released.
+    - Experimentation: Finding the right combination of hyperparameters (epochs, batch size, learning rate) requires testing and iteration.
+    - Model drift: Specializing too narrowly can make the model less effective at general language tasks outside the fine-tuned domain.
+
+- Combination of optimization strategies:
+    - Prompt engineering + RAG: Behavior and context
+    - Prompt engineering + fine-tuning: use when you need the model to consistently follow a specific style or format
+    - RAG + fine-tuning: factual grounding and consistent behaviour
+
+    
