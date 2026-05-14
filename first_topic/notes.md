@@ -67,3 +67,71 @@
 
 - Chat completion API:
     - Responses ar enot stateful so you have to manage them manually
+
+
+# 4.Develop generative AI apps that use tools
+- Code interpreter tool: Write and run Python dynamically during a conversation
+- Key features:
+    - Dynamic Python Execution: The model writes and runs Python code in a sandboxed environment
+    - File Handling: Upload, process, and download files (CSV, JSON, images, and so on)
+    - Data Analysis: Perform calculations, statistical analysis, and data transformations on the fly
+    - Real-time Feedback: The model sees code execution results and can iterate or fix errors
+    - Complex Problem Solving: Tackle math problems, simulations, and logic puzzles through executable code
+
+- Code_interpreter -> model analyzes the task to see if code is needed -> if so, generates code and runs results
+
+- Best practices: 
+    - Be specific: Describe the data format and expected output clearly. Many models internally use the name python tool to identify the code_interpreter tool - so use this language in your instructions.
+    - Provide context: Include relevant domain knowledge in your prompts
+    - Validate results: Always review AI-generated code for correctness before using in production
+    - Monitor costs: Code execution adds tokens; complex operations may use more resources
+    - Leverage libraries: Common packages like pandas, numpy, and matplotlib are pre-installed
+    - Error handling: The model can see errors and will attempt to fix them automatically
+
+- Limitations: Sandbox env with no external network access -> some libraries may not be available, timeout limits and memory constraints
+
+- web_search tool:
+    - Live information retrieval - Get recent information not available in static model training data
+    - Source-grounded responses - Build answers from retrieved web content
+    - Reduced hallucination risk - Improve reliability by checking external sources
+    - Automatic query generation - The model decides when and how to search based on user intent
+    - Seamless user experience - Search and response generation happen in one flow
+
+- Limitations:
+    - Results depend on what is publicly available and indexable at query time
+    - Source quality can vary, so output may still require human review
+    - Retrieved content may change over time, so repeated runs can produce different answers
+    - Some environments may apply regional, policy, or network restrictions to web access
+
+- file_search tool:
+    - Document-grounded answers - Responses are based on your uploaded files
+    - Semantic retrieval - Finds relevant passages by meaning, not only exact keyword matches
+    - Vector store integration - Search across one or more indexed document collections
+    - Citations and transparency - Include matched results for debugging and traceability
+    - Better enterprise relevance - Use organization-specific knowledge in model outputs
+
+- Limitations:
+    - Answer quality depends on document quality, coverage, and chunk relevance
+    - Very large or mixed-domain stores can return less focused context
+    - Updated source files may require re-indexing before new content is searchable
+    - Retrieval improves grounding but doesn't replace human review for sensitive decisions
+
+- function tool:
+    - Structured tool calls - The model emits explicit function-call requests
+    - Developer-controlled execution - Your application decides how and where functions run
+    - Reliable integration pattern - Call APIs, internal services, or helper utilities safely
+    - Multi-turn orchestration - Return tool output and let the model continue reasoning
+    - Grounded responses - Answers can include live, system-generated data
+
+- Best practices:
+    - Keep tools focused - Small, single-purpose functions are easier to control and test
+    - Validate function inputs - Never trust tool arguments blindly in production systems
+    - Handle errors safely - Return clear error outputs the model can reason about
+    - Log tool usage - Track calls, latency, and failure rates for debugging and governance
+    - Limit sensitive operations - Require explicit authorization for high-impact actions
+
+- Limitations: 
+    - The model requests function calls, but your application must run them
+    - Incorrect or unexpected tool arguments can occur and should be validated
+    - Tool latency can increase end-to-end response time
+    - Function calling improves reliability, but final outputs still need review for critical decisions
